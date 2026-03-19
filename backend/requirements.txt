@@ -3,4 +3,3 @@ uvicorn==0.34.0
 sqlalchemy==2.0.36
 pydantic==2.10.4
 sqlite3-api
-pip freeze
