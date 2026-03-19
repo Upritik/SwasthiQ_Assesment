@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime, date
 from typing import Optional
@@ -9,21 +9,21 @@ from .database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
 
+# --- Create FastAPI app ---
 app = FastAPI(title="Pharmacy CRM API")
-app = FastAPI(title="Pharmacy CRM API")
+
+# --- Add CORS middleware here ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # allow all domains
+    allow_credentials=True,
+    allow_methods=["*"],  # GET, POST, PUT, DELETE...
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def root():
     return {"message": "Pharmacy CRM API is running 🚀"}
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # ----------------- INVENTORY ROUTES -----------------
 
