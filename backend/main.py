@@ -15,7 +15,7 @@ app = FastAPI(title="Pharmacy CRM API")
 # --- Add CORS middleware here ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # allow all domains
+    allow_origins=["https://swasthiq-assesment-3.onrender.com"],  # allow all domains
     allow_credentials=True,
     allow_methods=["*"],  # GET, POST, PUT, DELETE...
     allow_headers=["*"],
