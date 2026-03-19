@@ -10,6 +10,12 @@ from .database import engine, get_db
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Pharmacy CRM API")
+app = FastAPI(title="Pharmacy CRM API")
+
+@app.get("/")
+def root():
+    return {"message": "Pharmacy CRM API is running 🚀"}
+
 
 app.add_middleware(
     CORSMiddleware,
