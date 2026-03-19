@@ -1,0 +1,16 @@
+# Exported from Render on 2026-03-19T15:07:33Z
+version: "1"
+projects:
+- name: Pharmacy_App
+  environments:
+  - name: Production
+    services:
+    - type: web
+      name: SwasthiQ_Assesment
+      runtime: python
+      repo: https://github.com/Upritik/SwasthiQ_Assesment
+      plan: free
+      region: oregon
+      buildCommand: pip install -r requirements.txt
+      startCommand: gunicorn your_application.wsgi
+      autoDeployTrigger: commit
