@@ -3,9 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from datetime import datetime, date
 from typing import Optional
-from backend import models
-import schemas
-from database import engine, get_db
+from . import models
+from . import schemas
+from .database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
 
