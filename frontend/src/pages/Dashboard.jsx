@@ -15,7 +15,6 @@ const Dashboard = () => {
   const [selectedMed, setSelectedMed] = useState(null);
   const [qty, setQty] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [refreshTrigger, setRefreshTrigger] = useState(0); // Optional: to refresh Inventory if needed
   
   const [activeTab, setActiveTab] = useState('Sales');
 
@@ -57,7 +56,6 @@ const Dashboard = () => {
       
       // Refresh Data
       fetchData();
-      setRefreshTrigger(prev => prev + 1);
     } catch (err) {
       alert("Error making sale: " + (err.response?.data?.detail || err.message));
     }
@@ -221,7 +219,11 @@ const Dashboard = () => {
         )}
 
         {activeTab === 'Inventory' && (
-          <InventorySection refreshTrigger={refreshTrigger} />
+          <InventorySection 
+            medicines={medicines} 
+            summary={summary} 
+            onRefresh={fetchData} 
+          />
         )}
       </div>
 
