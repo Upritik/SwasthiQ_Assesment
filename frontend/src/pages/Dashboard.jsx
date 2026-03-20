@@ -57,6 +57,7 @@ const Dashboard = () => {
       
       // Refresh Data
       fetchData();
+      window.dispatchEvent(new Event('inventory-updated')); // 👈 Added this line to notify Inventory page
       setRefreshTrigger(prev => prev + 1);
     } catch (err) {
       alert("Error making sale: " + (err.response?.data?.detail || err.message));

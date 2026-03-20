@@ -19,6 +19,16 @@ const Inventory = () => {
     fetchInventory();
   }, [searchTerm, statusFilter]);
 
+  // 🔔 Listen for inventory updates from other components (e.g., after a sale)
+  useEffect(() => {
+    const handleInventoryUpdate = () => {
+      fetchInventory();
+      fetchSummary();
+    };
+    window.addEventListener('inventory-updated', handleInventoryUpdate);
+    return () => window.removeEventListener('inventory-updated', handleInventoryUpdate);
+  }, []);
+
   const fetchSummary = async () => {
     try {
       const summaryRes = await apiClient.get('/inventory/summary');
@@ -47,6 +57,8 @@ const Inventory = () => {
       await apiClient.delete(`/inventory/${id}`);
       await fetchInventory();
       await fetchSummary();
+      // Notify other components that inventory has changed
+      window.dispatchEvent(new Event('inventory-updated'));
       alert("Item deleted successfully");
     } catch(err) {
       console.error(err);
@@ -59,6 +71,7 @@ const Inventory = () => {
       await apiClient.patch(`/inventory/${id}/status`, { status });
       fetchInventory();
       fetchSummary();
+      window.dispatchEvent(new Event('inventory-updated'));
     } catch(err) {
       console.error(err);
     }
@@ -222,7 +235,11 @@ const Inventory = () => {
       <MedicineFormModal 
         isOpen={isModalOpen} 
         onClose={() => { setIsModalOpen(false); setEditingMed(null); }} 
-        onSuccess={() => { fetchInventory(); fetchSummary(); }}
+        onSuccess={() => { 
+          fetchInventory(); 
+          fetchSummary(); 
+          window.dispatchEvent(new Event('inventory-updated')); // Notify others
+        }}
         initialData={editingMed}
       />
     </>
