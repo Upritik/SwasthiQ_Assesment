@@ -11,25 +11,13 @@ const Inventory = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMed, setEditingMed] = useState(null);
 
-  // Fetch summary data on component mount
   useEffect(() => {
     fetchSummary();
   }, []);
 
-  // Fetch inventory whenever search term or status filter changes
   useEffect(() => {
     fetchInventory();
   }, [searchTerm, statusFilter]);
-
-  // Listen for custom event 'inventory-updated' (dispatched after sales, additions, etc.)
-  useEffect(() => {
-    const handleInventoryUpdate = () => {
-      fetchInventory();
-      fetchSummary();
-    };
-    window.addEventListener('inventory-updated', handleInventoryUpdate);
-    return () => window.removeEventListener('inventory-updated', handleInventoryUpdate);
-  }, []);
 
   const fetchSummary = async () => {
     try {
@@ -59,8 +47,6 @@ const Inventory = () => {
       await apiClient.delete(`/inventory/${id}`);
       await fetchInventory();
       await fetchSummary();
-      // Dispatch event so other open tabs/components also refresh
-      window.dispatchEvent(new Event('inventory-updated'));
       alert("Item deleted successfully");
     } catch(err) {
       console.error(err);
@@ -73,7 +59,6 @@ const Inventory = () => {
       await apiClient.patch(`/inventory/${id}/status`, { status });
       fetchInventory();
       fetchSummary();
-      window.dispatchEvent(new Event('inventory-updated'));
     } catch(err) {
       console.error(err);
     }
@@ -103,7 +88,7 @@ const Inventory = () => {
       </div>
 
       <div className="content-area">
-        {/* Tabs */}
+        {/* Same tabs row without logic to match image 4 closely */}
         <div className="tabs">
           <div className="tab"><ShoppingCartIcon /> Sales</div>
           <div className="tab"><Package size={16} /> Purchase</div>
@@ -117,7 +102,7 @@ const Inventory = () => {
           </div>
         </div>
 
-        {/* Inventory Overview */}
+        {/* --- INVENTORY OVERVIEW --- */}
         <div className="form-title" style={{ marginBottom: 16 }}>Inventory Overview</div>
         <div className="form-section" style={{ display: 'flex', gap: 20, padding: 24 }}>
           <div style={{ flex: 1, borderRight: '1px solid var(--border-color)', paddingRight: 20 }}>
@@ -149,7 +134,7 @@ const Inventory = () => {
           </div>
         </div>
 
-        {/* Complete Inventory */}
+        {/* --- COMPLETE INVENTORY --- */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <div className="form-title" style={{ marginBottom: 0 }}>Complete Inventory</div>
           <div className="header-actions">
@@ -237,11 +222,7 @@ const Inventory = () => {
       <MedicineFormModal 
         isOpen={isModalOpen} 
         onClose={() => { setIsModalOpen(false); setEditingMed(null); }} 
-        onSuccess={() => { 
-          fetchInventory(); 
-          fetchSummary(); 
-          window.dispatchEvent(new Event('inventory-updated')); // notify others
-        }}
+        onSuccess={() => { fetchInventory(); fetchSummary(); }}
         initialData={editingMed}
       />
     </>
