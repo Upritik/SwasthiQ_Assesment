@@ -101,7 +101,7 @@ const Inventory = () => {
       </div>
 
       <div className="content-area">
-        {/* Same tabs row without logic to match image 4 closely */}
+        {/* Tabs */}
         <div className="tabs">
           <div className="tab"><ShoppingCartIcon /> Sales</div>
           <div className="tab"><Package size={16} /> Purchase</div>
@@ -115,9 +115,10 @@ const Inventory = () => {
           </div>
         </div>
 
-        {/* --- INVENTORY OVERVIEW --- */}
+        {/* Inventory Overview */}
         <div className="form-title" style={{ marginBottom: 16 }}>Inventory Overview</div>
         <div className="form-section" style={{ display: 'flex', gap: 20, padding: 24 }}>
+          {/* ... (your existing overview cards) ... */}
           <div style={{ flex: 1, borderRight: '1px solid var(--border-color)', paddingRight: 20 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: 13, marginBottom: 8 }}>
               Total Items <Package size={16} color="var(--primary-color)" />
@@ -147,7 +148,7 @@ const Inventory = () => {
           </div>
         </div>
 
-        {/* --- COMPLETE INVENTORY --- */}
+        {/* Complete Inventory */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <div className="form-title" style={{ marginBottom: 0 }}>Complete Inventory</div>
           <div className="header-actions">

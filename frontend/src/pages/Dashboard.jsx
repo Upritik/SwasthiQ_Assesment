@@ -15,7 +15,7 @@ const Dashboard = () => {
   const [selectedMed, setSelectedMed] = useState(null);
   const [qty, setQty] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [refreshTrigger, setRefreshTrigger] = useState(0); // Optional: to refresh Inventory if needed
+  const [refreshTrigger, setRefreshTrigger] = useState(0); // Used to refresh Inventory tab
   
   const [activeTab, setActiveTab] = useState('Sales');
 
@@ -44,7 +44,7 @@ const Dashboard = () => {
     try {
       await apiClient.post('/sales', {
         patient_id: patientId,
-        payment_mode: 'Card', // Hardcoded for simplicity as image didn't have selection
+        payment_mode: 'Card', // Hardcoded for simplicity
         items: [{ medicine_id: selectedMed.id, quantity: qty }]
       });
       alert("Sale Successful!");
@@ -57,8 +57,8 @@ const Dashboard = () => {
       
       // Refresh Data
       fetchData();
-      window.dispatchEvent(new Event('inventory-updated')); // 👈 Added this line to notify Inventory page
-      setRefreshTrigger(prev => prev + 1);
+      window.dispatchEvent(new Event('inventory-updated')); // Notify separate Inventory page
+      setRefreshTrigger(prev => prev + 1); // Refresh Inventory tab
     } catch (err) {
       alert("Error making sale: " + (err.response?.data?.detail || err.message));
     }
@@ -135,89 +135,89 @@ const Dashboard = () => {
           <>
             {/* --- MAKE SALE SECTION --- */}
             <div className="form-section">
-          <div className="form-title">Make a Sale</div>
-          <div className="form-subtitle">Select medicines from inventory</div>
-          
-          <div className="form-row">
-            <div className="input-group">
-              <input 
-                type="text" 
-                className="input" 
-                placeholder="Patient Id" 
-                value={patientId}
-                onChange={e => setPatientId(e.target.value)}
-              />
-            </div>
-            
-            <div className="input-group" style={{ flex: 2, position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', background: 'white', border: '1px solid var(--border-color)', borderRadius: '6px' }}>
-                <Search size={16} color="var(--text-secondary)" style={{ marginLeft: 10 }} />
-                <input 
-                  type="text" 
-                  className="input" 
-                  placeholder="Search medicines..." 
-                  style={{ border: 'none', flex: 1 }}
-                  value={searchMed}
-                  onChange={e => setSearchMed(e.target.value)}
-                />
-              </div>
+              <div className="form-title">Make a Sale</div>
+              <div className="form-subtitle">Select medicines from inventory</div>
               
-              {/* Basic Dropdown for search simulation */}
-              {searchMed && !selectedMed && (
-                <div style={{ position: 'absolute', top: 40, left: 0, right: 0, background: 'white', border: '1px solid var(--border-color)', borderRadius: '6px', zIndex: 10, boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-                  {medicines.filter(m => m.medicine_name.toLowerCase().includes(searchMed.toLowerCase())).map(m => (
-                    <div key={m.id} style={{ padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid var(--border-color)', fontSize: 13 }} 
-                         onClick={() => { setSelectedMed(m); setSearchMed(m.medicine_name); }}>
-                      <span style={{ fontWeight: 500 }}>{m.medicine_name}</span> <span style={{ color: 'var(--text-secondary)' }}>(₹{m.mrp}) - Stock: {m.quantity}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            
-            <div className="input-group" style={{ flex: 0.5 }}>
-              <input 
-                type="number" 
-                className="input" 
-                min="1"
-                value={qty}
-                onChange={e => setQty(Number(e.target.value))}
-              />
-            </div>
-
-            <button className="btn btn-primary" onClick={handleMakeSale} style={{ height: '38px' }}>Enter</button>
-            <button className="btn" style={{ background: '#ea580c', color: 'white', border: 'none', height: '38px', marginLeft: 20 }}>Bill</button>
-          </div>
-        </div>
-
-        {/* --- RECENT SALES --- */}
-        <div className="form-title">Recent Sales</div>
-        <div>
-            {recentSales.map(sale => (
-              <div key={sale.id} className="sale-item">
-                <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-                  <div className="sale-icon"><ShoppingCart size={20} /></div>
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: 14 }}>{sale.invoice_no}</div>
-                    <div style={{ color: 'var(--text-secondary)', fontSize: 12 }}>
-                      {sale.patient_id} • {sale.items_count} items • {sale.payment_mode}
-                    </div>
-                  </div>
+              <div className="form-row">
+                <div className="input-group">
+                  <input 
+                    type="text" 
+                    className="input" 
+                    placeholder="Patient Id" 
+                    value={patientId}
+                    onChange={e => setPatientId(e.target.value)}
+                  />
                 </div>
                 
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontWeight: 600, fontSize: 14 }}>₹{sale.total_amount}</div>
-                  <div style={{ color: 'var(--text-secondary)', fontSize: 12, marginBottom: 4 }}>
-                    {new Date(sale.created_at).toISOString().split('T')[0]}
+                <div className="input-group" style={{ flex: 2, position: 'relative' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', background: 'white', border: '1px solid var(--border-color)', borderRadius: '6px' }}>
+                    <Search size={16} color="var(--text-secondary)" style={{ marginLeft: 10 }} />
+                    <input 
+                      type="text" 
+                      className="input" 
+                      placeholder="Search medicines..." 
+                      style={{ border: 'none', flex: 1 }}
+                      value={searchMed}
+                      onChange={e => setSearchMed(e.target.value)}
+                    />
                   </div>
-                  <span className={`badge ${sale.status === 'Completed' ? 'badge-active' : 'badge-low'}`}>
-                    {sale.status}
-                  </span>
+                  
+                  {/* Basic Dropdown for search simulation */}
+                  {searchMed && !selectedMed && (
+                    <div style={{ position: 'absolute', top: 40, left: 0, right: 0, background: 'white', border: '1px solid var(--border-color)', borderRadius: '6px', zIndex: 10, boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+                      {medicines.filter(m => m.medicine_name.toLowerCase().includes(searchMed.toLowerCase())).map(m => (
+                        <div key={m.id} style={{ padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid var(--border-color)', fontSize: 13 }} 
+                             onClick={() => { setSelectedMed(m); setSearchMed(m.medicine_name); }}>
+                          <span style={{ fontWeight: 500 }}>{m.medicine_name}</span> <span style={{ color: 'var(--text-secondary)' }}>(₹{m.mrp}) - Stock: {m.quantity}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
+                
+                <div className="input-group" style={{ flex: 0.5 }}>
+                  <input 
+                    type="number" 
+                    className="input" 
+                    min="1"
+                    value={qty}
+                    onChange={e => setQty(Number(e.target.value))}
+                  />
+                </div>
+
+                <button className="btn btn-primary" onClick={handleMakeSale} style={{ height: '38px' }}>Enter</button>
+                <button className="btn" style={{ background: '#ea580c', color: 'white', border: 'none', height: '38px', marginLeft: 20 }}>Bill</button>
               </div>
-            ))}
-            {recentSales.length === 0 && <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>No recent sales</p>}
-          </div>
+            </div>
+
+            {/* --- RECENT SALES --- */}
+            <div className="form-title">Recent Sales</div>
+            <div>
+              {recentSales.map(sale => (
+                <div key={sale.id} className="sale-item">
+                  <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                    <div className="sale-icon"><ShoppingCart size={20} /></div>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: 14 }}>{sale.invoice_no}</div>
+                      <div style={{ color: 'var(--text-secondary)', fontSize: 12 }}>
+                        {sale.patient_id} • {sale.items_count} items • {sale.payment_mode}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontWeight: 600, fontSize: 14 }}>₹{sale.total_amount}</div>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: 12, marginBottom: 4 }}>
+                      {new Date(sale.created_at).toISOString().split('T')[0]}
+                    </div>
+                    <span className={`badge ${sale.status === 'Completed' ? 'badge-active' : 'badge-low'}`}>
+                      {sale.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              {recentSales.length === 0 && <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>No recent sales</p>}
+            </div>
           </>
         )}
 
@@ -229,7 +229,10 @@ const Dashboard = () => {
       <MedicineFormModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        onSuccess={() => fetchData()}
+        onSuccess={() => {
+          fetchData();
+          setRefreshTrigger(prev => prev + 1); // 👈 Ensure Inventory tab refreshes
+        }}
       />
     </>
   );
